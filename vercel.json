@@ -1,0 +1,11 @@
+{
+    "builds": [{
+        "src": "studyadda/wsgi.py",
+        "use": "@ardnt/vercel-python-wsgi",
+        "config": { "maxLambdaSize": "15mb" }
+    }],
+    "routes": [{
+        "src": "/(.*)",
+        "dest": "studyadda/wsgi.py"
+    }]
+}
