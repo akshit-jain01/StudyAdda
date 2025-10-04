@@ -1,0 +1,86 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+
+bool isbipartite_usingBFS(int V, vector<int> adj_lst[]) {
+    vector<int> clr(V, -1);
+
+    for(int start = 0; start < V; start++) {
+        if(clr[start] == -1) { // unvisited component
+            queue<int> q;
+            q.push(start);
+            clr[start] = 0;
+
+            while(!q.empty()) {
+                int node = q.front();
+                q.pop();
+
+                for(auto iterator: adj_lst[node]) {
+                    if(clr[iterator] == -1) {
+                        clr[iterator] = !clr[node];
+                        q.push(iterator);
+                    } 
+                    else if(clr[iterator] == clr[node]) {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+    return true;
+}
+
+bool isbipartite_usingDFS(int node, int color, vector<int> &clr, vector<int> adj_lst[]) {
+    clr[node] = color;
+    for(auto iterator: adj_lst[node]) {
+        if(clr[iterator] == -1) {
+            if(!isbipartite_usingDFS(iterator, !color, clr, adj_lst)) 
+                return false;
+        } 
+        else if(clr[iterator] == clr[node]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool isbipartite(int V, vector<int> adj_lst[]) {
+    vector<int> clr(V, -1);
+    for(int i = 0; i < V; i++) {
+        if(clr[i] == -1) {
+            if(!isbipartite_usingDFS(i, 0, clr, adj_lst)) 
+                return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int v;
+    cin >> v;
+    vector<int> adj_lst[v];
+    int mat[v][v];
+    for(int i = 0;i<v;i++){
+        for(int j = 0;j<v;j++){
+            cin>>mat[i][j];
+            if(mat[i][j]==1){
+                adj_lst[i].push_back(j);
+            }
+        }
+    }
+
+    // Using BFS
+    if(isbipartite_usingBFS(v, adj_lst)) 
+        cout << "Graph is Bipartite (BFS)\n";
+    else 
+        cout << "Graph is NOT Bipartite (BFS)\n";
+
+    // Using DFS
+    if(isbipartite(v, adj_lst)) 
+        cout << "Graph is Bipartite (DFS)\n";
+    else 
+        cout << "Graph is NOT Bipartite (DFS)\n";
+
+    return 0;
+}
